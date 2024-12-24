@@ -166,7 +166,6 @@ int main (int argc, char *argv[]) {
         req_parse.push_chunk(std::string_view(buf, n));
       }while (req_parse.need_more_chunks());
 
-      size_t n = CHECK_CALL(read, connid, buf, sizeof(buf));
       auto req=req_parse.m_header;
       fmt::println("我的接收: {}", req);
 
