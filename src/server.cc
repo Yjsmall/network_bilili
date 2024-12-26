@@ -1,4 +1,3 @@
-#include "fmt/base.h"
 #include <cerrno>
 #include <cstddef>
 #include <cstdio>
