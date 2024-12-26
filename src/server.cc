@@ -38,7 +38,7 @@ struct http_header_parser {
     bool        m_body_finished   = false;
     bool        m_header_finished = false;
 
-    [[nodiscard]] bool hdeader_finished() { return m_header_finished; }
+    [[nodiscard]] bool header_finished() { return m_header_finished; }
 
     [[nodiscard]] bool need_more_chunks() const { return !m_body_finished; }
 
@@ -80,7 +80,7 @@ struct http_header_parser {
             size_t header_len = m_header.find("\r\n\r\n");
             if (header_len != std::string::npos) {
                 m_header_finished = true;
-                m_body            = m_header.substr(header_len);
+                m_body            = m_header.substr(header_len + 4);
                 m_header.resize(header_len);
 
                 // analyze the header
@@ -88,6 +88,10 @@ struct http_header_parser {
             }
         } else {
             m_body.append(chunk);
+        }
+
+        if (m_body.size() >= content_length) {
+            m_body_finished = true;
         }
     }
 };
@@ -191,12 +195,12 @@ int main(int argc, char *argv[]) {
                 req_parse.push_chunk(std::string_view(buf, n));
             } while (req_parse.need_more_chunks());
 
-            auto req = req_parse.m_header;
-            fmt::println("我的接收: {}", req);
+            fmt::println("收到的请求header是: {}", req_parse.m_header);
+            fmt::println("收到的请求正文: {}", req_parse.m_body);
 
             std::string res =
                 "HTTP/1.1 200 OK\r\nServer: co_http\r\nConnection: "
-                "close\r\nContent-length: 9\r\n\r\nHelloword";
+                "close\r\nContent-length: 10\r\n\r\nHelloworld";
 
             fmt::println("我的反馈是: {}", res);
             CHECK_CALL(write, connid, res.data(), res.size());
