@@ -2,6 +2,7 @@ set_project("HTTP Server")
 set_languages("c99", "cxx17")
 add_requires("fmt")
 
+add_rules("plugin.compile_commands.autoupdate", {outputdir = "build"})
 add_rules("mode.debug", "mode.release")
 target("server")
   set_kind("binary")
