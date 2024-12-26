@@ -82,10 +82,9 @@ struct http_header_parser {
                 m_header_finished = true;
                 m_body            = m_header.substr(header_len);
                 m_header.resize(header_len);
-                size_t body_len = 0;
-                if (m_body.size() >= body_len) {
-                    m_body_finished = true;
-                }
+
+                // analyze the header
+                _extract_header();
             }
         } else {
             m_body.append(chunk);
